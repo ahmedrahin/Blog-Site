@@ -299,7 +299,6 @@
                       }
 
                        }
-
                     }
                     } else {
                       die("MySql Error:" . mysqli_error($db));

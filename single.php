@@ -48,7 +48,93 @@
     </section>
     <!-- ::::::::::: Page Banner Section End ::::::::: -->
 
+    <?php
+        function agoTime($timestamp){
+            $time_ago     = strtotime($timestamp);
+            $current_time = time();
+            
+            $time_differnce = $current_time - $time_ago;
+            $seconds   = $time_differnce;
+            $minutes   = round($seconds / 60);
+            $hours     = round($seconds / 3600);
+            $days      = round($seconds / 86400);
+            $weeks     = round($seconds / 604800);
+            $months    = round($seconds / 2629440);
+            $years     = round($seconds / 31553280);
 
+            if( $seconds <= 60 ){
+                return "Just Now";
+            }
+
+            else if( $minutes <= 60 ){
+
+                if( $minutes == 1 ){
+                    return "1 minute ago";
+                } else {
+                    return $minutes . " minutes ago";
+                }
+
+            }
+
+            else if( $hours <= 24 ){
+
+                if( $hours == 1 ){
+                    return "1 hour ago";
+                } else {
+                    return $hours . " hrs ago";
+                }
+                
+            }
+
+            else if( $days <= 7 ){
+
+                if( $days == 1 ){
+                    return "1 day ago";
+                } else {
+                    return $days . " days ago";
+                }
+                
+            }
+
+            else if( $days <= 7 ){
+
+                if( $days == 1 ){
+                    return "1 day ago";
+                } else {
+                    return $days . " days ago";
+                }
+                
+            }
+
+            else if( $weeks <= 4.3 ){
+
+                if( $weeks == 1 ){
+                    return "1 week ago";
+                } else {
+                    return $weeks . " weeks ago";
+                }
+                
+            }
+
+            else if( $months <= 12 ){
+
+                if( $months == 1 ){
+                    return "1 month ago";
+                } else {
+                    return $months . " months ago";
+                }
+                
+            }
+
+            else {
+                if( $years == 1 ){
+                    return "1 year ago";
+                } else {
+                    return $years . " years ago";
+                }
+            }									
+        }
+    ?>
 
     <!-- :::::::::: Blog With Right Sidebar Start :::::::: -->
     <section>
@@ -59,7 +145,8 @@
 
                     <?php 
                     
-                        if(isset($_GET['p'])){
+                        if(isset($_GET['p']))
+                        {
                             $postId = $_GET['p'];
                             
                             $readData   = "SELECT * FROM post WHERE id = '$postId' ";
@@ -142,7 +229,7 @@
                             if(isset($_GET['p'])){ 
 
                                 $postId          = $_GET['p'];
-                                $cmtSql          = "SELECT * FROM comment WHERE post_id = $postId ";
+                                $cmtSql          = "SELECT * FROM comment WHERE post_id = $postId";
                                 $sendDb          = mysqli_query($db, $cmtSql);
                                 $total_cmt       = mysqli_num_rows($sendDb);
 
@@ -168,6 +255,7 @@
                                         $cmtpst      = $cmt_row['post_id'];
                                         $cmtuser     = $cmt_row['user_id'];
                                         $cmtdate     = $cmt_row['cmt_date'];
+                                        $time        = $cmt_row['date_time'];
 
                                         ?>
 
@@ -218,6 +306,7 @@
                                                                             if( $cmtuser == $_SESSION['userId'] ){
                                                                                 ?>
                                                                                    <form action="" method="POST" class="delCmt">
+                                                                                   <input type="hidden" name="delCmt_id" value=<?php echo $cmtId; ?>>
                                                                                         <button type="submit" name="delCmt">
                                                                                             <i class="fa fa-trash"></i>
                                                                                         </button>
@@ -229,7 +318,7 @@
                                                                         
                                                                         ?>
                                                                     </li>
-                                                                    <li class="post-by-hour"><?php echo "20 hours ago"; ?></li>
+                                                                    <li class="post-by-hour"><?php echo agoTime($time); ?></li>
                                                                 </ul>
                                                             </div>
                                                             <p>
@@ -243,8 +332,6 @@
 
                                         <?php
 
-                                        $_SESSION['delCmt'] = $cmtId;
-
                                     }   
 
                                 } else {
@@ -252,8 +339,8 @@
                                 }
                                 
                                 if(isset($_POST['delCmt'])){
-                                    $del_id    = $_SESSION['delCmt'];
-                                    $del_cmt   = "DELETE FROM comment WHERE id = '$del_id'";
+                                    $delId     = $_POST['delCmt_id'];
+                                    $del_cmt   = "DELETE FROM comment WHERE id = '$delId'";
                                     $delDb     = mysqli_query($db, $del_cmt);
 
                                     if($delDb){
@@ -266,12 +353,7 @@
                                    <!-- Single Comment Section End -->
                            <?php
 
-
                             }
-
-                            
-                                            
-
                         ?>                    
 
                     <!-- Post New Comment Section Start -->
@@ -281,7 +363,6 @@
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
                         <!-- Form Start -->
                         <?php
-
 
                             if(  !empty($_SESSION['userId']) || !empty($_SESSION['userEmail']) ){
 
@@ -321,12 +402,14 @@
                                             
                                              } 
 
-                                             $comment         = mysqli_real_escape_string($db, $_POST['comments']);
+                                             $comment         =  mysqli_real_escape_string($db, $_POST['comments']);
                                              $commentPost     =  $cpostId;
                                              $userId          =  $_SESSION['userId'];
+                                             $time            = date("d-M-Y h:ia");
+											 date_default_timezone_set('Asia/Dhaka');
                                              
                                              if(!empty($comment)){
-                                                 $commentSql = "INSERT INTO comment (comments, post_id, user_id, cmt_date) VALUES ('$comment', '$commentPost', '$userId', now())";
+                                                 $commentSql = "INSERT INTO comment (comments, post_id, user_id, cmt_date, date_time) VALUES ('$comment', '$commentPost', '$userId', now(), '$time')";
                                              $commentDb  = mysqli_query( $db, $commentSql );
 
                                              if($commentDb){

@@ -36,6 +36,7 @@
                             $img = NULL;
                             $removeImg = "UPDATE usersinfo SET image='$img' WHERE id = '$userid' ";
                             $removeDb   = mysqli_query($db, $removeImg);   
+                            header("Location: update.php?id=$userid");
                         }
                     
                     ?>
@@ -65,7 +66,8 @@
 
                             if( !empty( $image ) ){
                                 $addImg = "UPDATE usersinfo SET image='$img' WHERE id = '$userid' ";
-                                $addDb   = mysqli_query($db, $addImg);   
+                                $addDb   = mysqli_query($db, $addImg); 
+                                header("Location: update.php?id=$userid");  
                             }
 
                         }
@@ -225,7 +227,7 @@
                     $upDb    = mysqli_query($db, $updateSql);
 
                     if($updateSql){
-                        header("Location update.php");
+                        header("Location: update.php");
 
                     }else {
                         die();
@@ -242,7 +244,7 @@
                     $upDb      = mysqli_query($db, $updateSql);
                     
                     if($updateSql){
-                        header("Location update.php");
+                        header("Location: update.php");
                     }else {
                         die();
                     }
